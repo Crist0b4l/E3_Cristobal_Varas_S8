@@ -18,3 +18,4 @@ while True:
         break
     else:
         print("Por favor seleccione una opción válida (1-4)")
+        print()

@@ -82,6 +82,7 @@ def guardar(tipo, patente, marca, modelo, precio, multas, fecha_registro, nom_du
     })
 
     print("Vehículo registrado exitosamente.")
+    print()
 
 
 def registrar_vehiculo():
@@ -141,11 +142,14 @@ def registrar_vehiculo():
 
         guardar(tipo, patente, marca, modelo, precio,
                 multas, fecha_registro, nom_duenno)
-        print(vehiculos)
         break
 
 
 def buscar():
+    if not vehiculos:
+        print("No hay vehículos registrados")
+        print()
+        return
     while True:
         print("Ingrese una patente ('AA1111' o 'AAAA11') para consultar los datos de un vehículo o presione 00 para salir: ")
         patente_buscada = input().upper().replace("-", "")
@@ -182,7 +186,70 @@ def buscar():
 
 
 def imprimir_certificados():
-    return
+    if not vehiculos:
+        print("No hay vehículos registrados")
+        print()
+        return
+
+    while True:
+        print("Seleccione el tipo de certificado a imprimir")
+        print("1. Certificado de emisiones de contaminantes")
+        print("2. Certificado de anotaciones vigentes")
+        print("3. Certificado de multas")
+        print("4. Volver al menú principal")
+
+        opcion_certificado = input("Ingrese una opción (1-4): ")
+        if opcion_certificado == "4":
+            print("Volviendo al menú principal...")
+            print()
+            break
+
+        patente = input(
+            "Ingrese la patente del vehículo: ").upper().replace("-", "")
+
+        auto_encontrado = None
+        for auto in vehiculos:
+            if auto['patente'] == patente:
+                auto_encontrado = auto
+                break
+
+        if not auto_encontrado:
+            print("No se encontraron vehículos con esa patente")
+            print()
+            continue
+
+        import random
+        valor_certificado = random.randint(2300, 4500)
+
+        if opcion_certificado == "1":
+            print("Certificado de Emisión de Contaminantes")
+            print(f"Patente: {patente}")
+            print(f"Nombre del dueño: {auto_encontrado['nom_duenno']}")
+            print(f"Valor: ${valor_certificado}")
+            print()
+
+        elif opcion_certificado == "2":
+            print("Certificado de Anotaciones Vigentes")
+            print(f"Patente: {patente}")
+            print(f"Nombre del dueño: {auto_encontrado['nom_duenno']}")
+            print(f"Valor: ${valor_certificado}")
+            print()
+
+        elif opcion_certificado == "3":
+            if auto_encontrado['multas']:
+                print("Certificado de Multas")
+                print(f"Patente: {patente}")
+                print(f"Nombre del dueño: {auto_encontrado['nom_duenno']}")
+                for multa in auto_encontrado['multas']:
+                    print(
+                        f"- Monto de la multa: ${multa['monto']} - Fecha: {multa['fecha']}")
+            else:
+                print(
+                    "El vehículo no tiene multas registradas. No se emitirá ningún certificado.")
+                print()
+        else:
+            print("Opción no válida. Por favor, intente nuevamente.")
+            print()
 
 
 def salir():
