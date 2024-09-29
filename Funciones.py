@@ -21,8 +21,9 @@ def validar_tipo(tipo):
 
 
 def validar_patente(patente):
-    '''Verificar si la patente cumple con el formato de patentes chilenas("AA1111" o "AAAA11")'''
+    '''Verificar si la patente cumple con el formato de patentes chilenas("AA1111" o "AAAA11") con una expresión regular'''
     patente = patente.upper().replace("-", "")
+    '''la expresion regular indica que debe tener 2 caracteres alfabeticos y 4 numericos o o alfabeticos y 2 numericos'''
     if re.match(r"^[A-Z]{2}\d{4}$|^[A-Z]{4}\d{2}$", patente):
         return True
     return False
@@ -46,7 +47,7 @@ def validar_precio(precio):
 
 def validar_fecha(fecha):
     '''Validar que la fecha esté en el formato DD-MM-AAAA'''
-    # Expresión regular para el formato DD-MM-AAAA
+    '''Expresión regular para el formato DD-MM-AAAA'''
     patron = r'^\d{2}-\d{2}-\d{4}$'
     if re.match(patron, fecha):
         return True
@@ -54,21 +55,26 @@ def validar_fecha(fecha):
 
 
 def validar_nom_duenno(nom_duenno):
+    '''Validar que el nombre del dueño no vaya vacio'''
     return len(nom_duenno) > 0
 
 
 def validar_campo(mensaje, fx_validar, mensaje_error):
     '''Función para validar un campo con opción de cancelar'''
     while True:
+        '''Se le asigna lo que ingresa el usuario en el input a la variable valor'''
         valor = input(mensaje)
         if valor == "00":
             return "cancelar"
+        '''la variable valor es pasada como argumento a la funcion de validacion correspondiente'''
         if fx_validar(valor):
             return valor
+        '''Si la funcion de validacion no valida, se imprime un mensaje de error'''
         print(mensaje_error)
 
 
 def guardar(tipo, patente, marca, modelo, precio, multas, fecha_registro, nom_duenno):
+    '''Si la validacion es correcta se guardan los datos del vehiculo en un diccionario'''
     vehiculos.append({
         "tipo": tipo.title(),
         "patente": patente.upper(),
@@ -86,6 +92,7 @@ def guardar(tipo, patente, marca, modelo, precio, multas, fecha_registro, nom_du
 
 
 def registrar_vehiculo():
+    '''En esta funcion se ingresan los datos que seran validados en las funciones de validacion, junto con el mensaje de error en caso de ser necesario'''
     while True:
         tipo = validar_campo(
             "Ingrese el tipo de vehículo 'Auto', 'Suvs', 'Pickups', 'Vans' (00 para cancelar): ",
@@ -139,23 +146,26 @@ def registrar_vehiculo():
             "Ingrese nombre del dueño del vehículo (00 para cancelar): ")
         if nom_duenno == "cancelar":
             return
-
+        '''Se pasan los valores a la funcion guardar para que esta los añada la lista "vehiculos"'''
         guardar(tipo, patente, marca, modelo, precio,
                 multas, fecha_registro, nom_duenno)
         break
 
 
 def buscar():
+    '''Buscar un vehiculo mediante una patente previamente registrada'''
     if not vehiculos:
         print("No hay vehículos registrados")
         print()
         return
     while True:
         print("Ingrese una patente ('AA1111' o 'AAAA11') para consultar los datos de un vehículo o presione 00 para salir: ")
+        '''Estandarizar la entrada de la patente'''
         patente_buscada = input().upper().replace("-", "")
         if patente_buscada == "00":
             break
 
+        '''Se crea una variable vacia, se itera sobre la lista vehiculos y si la patente ingresada coincide con alguna de las patentes de un auto de la lista vehiculos se le asigna ese auto a la variable auto_encontrado'''
         auto_encontrado = None
         for auto in vehiculos:
             if auto['patente'] == patente_buscada:
@@ -163,7 +173,7 @@ def buscar():
                 break
 
         if auto_encontrado:
-            # Imprimir los datos básicos del vehículo
+            '''Imprimir los datos básicos del vehículo'''
             print(f"Tipo de vehículo: {auto_encontrado['tipo']}")
             print(f"Patente del vehículo: {auto_encontrado['patente']}")
             print(f"Marca del vehículo: {auto_encontrado['marca']}")
@@ -173,7 +183,7 @@ def buscar():
             print(f"Nombre dueño del vehículo: {
                   auto_encontrado['nom_duenno']}")
 
-            # Si tiene multas, imprimirlas
+            '''Si tiene multas, imprimirlas'''
             if auto_encontrado["multas"]:
                 print("Multas del vehículo:")
                 for multa in auto_encontrado["multas"]:
@@ -186,6 +196,7 @@ def buscar():
 
 
 def imprimir_certificados():
+    '''crea un submenu con las opciones para imprimir certificados'''
     if not vehiculos:
         print("No hay vehículos registrados")
         print()
@@ -235,6 +246,7 @@ def imprimir_certificados():
             print(f"Valor: ${valor_certificado}")
             print()
 
+            '''Si tiene multas se extrae su valor de la lista vehiculos'''
         elif opcion_certificado == "3":
             if auto_encontrado['multas']:
                 print("Certificado de Multas")
@@ -253,6 +265,7 @@ def imprimir_certificados():
 
 
 def salir():
+    '''Funcion para terminar la ejecucion de la aplicacion'''
     autor = "Cristóbal Varas Polanco"
     version = 1.0
     print("Saliendo...")
